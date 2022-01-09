@@ -6,7 +6,8 @@ const initialState = {
 
 
 export const uiReducer = (state = initialState, action) => {
-    switch (action.types) {
+    // console.log('esto llega al reducer', action)
+    switch (action.type) {
         case types.uiOpenModal:
             return {
                 ...state,
@@ -20,7 +21,7 @@ export const uiReducer = (state = initialState, action) => {
             }
     
         default:
-            return state
+            return state;
  
     }
 }

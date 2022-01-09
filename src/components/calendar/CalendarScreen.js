@@ -3,43 +3,49 @@ import {Calendar as BigCalendar, momentLocalizer} from 'react-big-calendar';
 import moment from 'moment';
 import { Navbar } from '../ui/Navbar';
 import { messages } from '../../helpers/calendar-messsages-es';
+import {useDispatch, useSelector } from 'react-redux';
+import {uiOpenModal} from '../../actions/ui'
+
 
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import  'moment/locale/es'
 import { CalendarEvent } from './CalendarEvent';
 import { CalendarModal } from './CalendarModal';
+import { eventClearActiveEvent, eventSetActive } from '../../actions/events';
+import { AddNewFab } from '../ui/AddNewFab';
+import { DeleteEventFab } from '../ui/DeleteEventFab';
 //? Para cambiar el idioma a moment y a su vez el del calendar
 
 moment.locale('es');
 
 const localizer = momentLocalizer(moment); 
 
-const myEventsList = [{
-    title: 'Cumpleaños de',
-    start: moment().toDate(),
-    end: moment().add(2, 'hours').toDate(),
-    bgcolor: "#fafafa",
-    notes: 'Comprar el pastel',
-    user: {
-        _id: '123',
-        name: 'Milena'
-    }
-}]
 
 export const CalendarScreen = () => {
+
+    const dispatch = useDispatch();
+
+    const {events, activeEvent} = useSelector(state => state.calendar)
 
     const [lastView, setlastView] = useState(localStorage.getItem('lastView') || 'month');
 
     const onDoubleClick = (e) => {
-        console.log('double click:', e)
+        // console.log('double click:', e)
+        dispatch(uiOpenModal())
+
     };
 
-    const onSelectEvent = (e) => {
-        console.log('select event:', e)
+    const onSelectEvent = (e) => {        
+        const {bgcolor, ...event} = e;
+        
+        console.log('select event:', event);
+
+        dispatch(eventSetActive(event))
+        
     };
 
     const onViewChange = (e) => {
-        console.log('view:',e)
+        // console.log('view:',e)
         const currentView = e;
         setlastView(currentView);
         localStorage.setItem('lastView', currentView);
@@ -57,6 +63,11 @@ export const CalendarScreen = () => {
         return {
             style
         }
+    };
+
+    const onSelectSlot = (e) => {
+        console.log(e)
+        dispatch(eventClearActiveEvent());
     }
 //? Los components hacen detectar el evento
     return (
@@ -64,7 +75,7 @@ export const CalendarScreen = () => {
             <Navbar />
             <BigCalendar
                 localizer={localizer}
-                events={myEventsList}
+                events={events}
                 startAccessor="start"
                 endAccessor="end"
                 messages={messages}
@@ -76,7 +87,12 @@ export const CalendarScreen = () => {
                 onSelectEvent={onSelectEvent}
                 onView={onViewChange}
                 view={lastView}
+                selectable={true}
+                onSelectSlot={onSelectSlot}
             />
+
+            <AddNewFab />
+            { (activeEvent) ? <DeleteEventFab /> : ''}
 
             <CalendarModal />
         </div>

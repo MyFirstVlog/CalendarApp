@@ -1,26 +1,86 @@
+import Swal from "sweetalert2";
+import { fetchConToken, fetchSinToken } from "../helpers/fetch";
+import { types } from "../types/types";
 
 
 export const startLogin = (email, password) => {
-    return async () => {
-        console.log(email,password,'desde action')
-        let res = {};
-        const response = await fetch('http://localhost:3400/api/auth', {
-            method:'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body:JSON.stringify({
-                email,
-                password
-            }),
-        }).then(data => {
-            return data.json()
-        }).then(
-            datares =>{
-                res = {...datares}
-            }
-        );
+    console.log({email,password})
+    return async (dispatch) => {
+        const response = await fetchSinToken('auth', {email,password}, 'POST');
+        const body = await response.json();
 
-        console.log(res);
+        if(body.ok){
+            localStorage.setItem('token', body.token);
+            localStorage.setItem('token-init-date', new Date().getTime());
+            dispatch(login({
+                uid: body.uid,
+                name: body.name
+            }));
+        }else{
+            Swal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: 'Credentials unknowns',
+            })
+        }
+    }
+            
+};
+
+export const startRegister = (email, password, name) => {
+    return async (dispatch) => {
+        const response = await fetchSinToken('auth/new', {name, email, password},'POST');
+        const body = await response.json();
+        
+        if(body.ok){
+            localStorage.setItem('token', body.token);
+            localStorage.setItem('token-init-date', new Date().getTime());
+            dispatch(login({
+                uid: body.uid,
+                name: body.name
+            }));
+        }else{
+            Swal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: 'Credentials unknowns',
+            })
+        }
     }
 };
+
+export const startChecking = () => {
+    return async (dispatch) => {
+        
+        const response = await fetchConToken('auth/renew');
+        const body = await response.json();
+        
+        if(body.ok){
+            localStorage.setItem('token', body.token);
+            localStorage.setItem('token-init-date', new Date().getTime());
+            dispatch(login({
+                uid: body.uid,
+                name: body.name
+            }));
+        }else{
+            dispatch(checkingFinish());
+        }
+
+    }
+};
+
+export const startLogout= () => {
+    return (dispatch) => {
+        localStorage.removeItem('token');
+        localStorage.removeItem('token-init-date');
+        dispatch(logout());
+    }
+}
+
+const logout  = () => ({type: types.authLogout});
+const checkingFinish = () => ({type: types.authCheckingFinish});
+
+const login = (user) => ({
+    type: types.authLogin,
+    payload: user
+})

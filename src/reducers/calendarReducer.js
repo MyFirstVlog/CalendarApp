@@ -1,10 +1,13 @@
-import moment from "moment";
-import { nanoid } from "nanoid";
 import { types } from "../types/types";
 
 
 const initialState = {
-    events: [{
+    events: [],
+    activeEvent:null
+};
+
+/**
+ * {
         id: nanoid(10),
         title: 'Cumpleaños de',
         start: moment().toDate(),
@@ -14,9 +17,8 @@ const initialState = {
             _id: nanoid(5),
             name: 'Milena'
         }
-    }],
-    activeEvent:null
-};
+    }
+ */
 
 export const calendarReducer = (state=initialState, action) => {
     switch (action.type) {
@@ -53,6 +55,15 @@ export const calendarReducer = (state=initialState, action) => {
                 events: state.events.filter(event => event.id !== state.activeEvent.id),
                 activeEvent: null
             };
+        case types.eventLoaded:
+            return {
+                ...state,
+                events: [...action.payload]
+            }
+        case types.eventLogout:
+            return {
+                ...initialState
+            }
         default:
             return state;
     }

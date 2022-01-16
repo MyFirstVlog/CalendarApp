@@ -7,8 +7,7 @@ import './styles.css'
 import moment from 'moment';
 import Swal from 'sweetalert2';
 import { uiCloseModal } from '../../actions/ui';
-import { eventAddNew, eventClearActiveEvent, eventsUpdated } from '../../actions/events';
-import { nanoid } from 'nanoid';
+import {eventClearActiveEvent, eventStartAddNew, eventStartUpdate } from '../../actions/events';
 
 const customStyles = {
   content: {
@@ -103,16 +102,9 @@ export const CalendarModal = () => {
         }
 
         if(activeEvent){
-            dispatch(eventsUpdated(formValues));
+            dispatch(eventStartUpdate(formValues));
         }else{
-            dispatch(eventAddNew({
-                ...formValues,
-                id: nanoid(10),
-                user: {
-                    _id: nanoid(5),
-                    name:'Alejandro'
-                }
-            }));
+            dispatch(eventStartAddNew(formValues));
         }
 
 

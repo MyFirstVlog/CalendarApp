@@ -20,12 +20,14 @@ const customStyles = {
   },
 };
 
-Modal.setAppElement('#root');
+if(process.env.NODE_ENV !== 'test'){
+    Modal.setAppElement('#root');
+}
 
 const now = moment().minutes(0).seconds(0).add(1, 'hours');
 const later = now.clone().add(1, 'hours');
 const initEvent = {
-    title: 'Evento',
+    title: '',
     notes: '',
     start: now.toDate(),
     end: later.toDate()
@@ -89,6 +91,8 @@ export const CalendarModal = () => {
         const momentStart = moment(start);
         const momentEnd = moment(end);
 
+        console.log(end);
+
         if(momentStart.isSameOrAfter(momentEnd)){
             // console.log('fecha de inicio debe ser menor')
             return Swal.fire({
@@ -122,6 +126,7 @@ export const CalendarModal = () => {
         closeTimeoutMS={200}
         className="modal"
         overlayClassName= "modal-fondo"
+        ariaHideApp={!process.env.NODE_ENV === 'test' }
       >
           <h1> {(activeEvent) ? 'Editar Evento' : 'Nuevo Evento'}</h1>
             <hr />

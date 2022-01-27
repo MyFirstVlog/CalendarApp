@@ -8,6 +8,7 @@ export const DeleteEventFab = () => {
     const dispatch = useDispatch();
 
     const handleDelete = () => {
+        console.log('hola');
         dispatch(eventStartDelete());
         Swal.fire({
             icon: 'success',

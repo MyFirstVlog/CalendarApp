@@ -14,14 +14,14 @@ export const LoginScreen = () => {
     console.log({state});
 
     const [formLoginValues, handleLoginInputChange] = useForm({
-        lEmail: 'milena@cidenet.com',
-        lPassword: '123456'
+        lEmail: '',
+        lPassword: ''
     });
     const [formRegisterValues, handleRegisterInputChange] = useForm({
         rName: 'Milena',
-        rEmail: 'milena@cidenet.com',
-        rPassword: '123456',
-        rPassword2: '123456'
+        rEmail: 'milena2@cidenet.com',
+        rPassword: '',
+        rPassword2: ''
     });
 
     const {lEmail, lPassword} = formLoginValues;
@@ -29,6 +29,8 @@ export const LoginScreen = () => {
 
     const handleLogin = (e) => {
         e.preventDefault();
+
+        console.log('se activoooo');
 
         const {lEmail: email,lPassword: password} = formLoginValues;
 
